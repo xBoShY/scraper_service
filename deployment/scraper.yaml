@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scraper-deployment
+  labels:
+    app: scraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scraper
+  template:
+    metadata:
+      labels:
+        app: scraper
+    spec:
+      containers:
+        - name: scraper
+          image: scraper_service/scraper:0.1.0
+          ports:
+            - containerPort: 8080
+            - containerPort: 9095
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scraper
+  labels:
+    app: scraper
+spec:
+  ports:
+    - name: service
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: metrics
+      protocol: TCP
+      port: 9095
+      targetPort: 9095
+  selector:
+    app: scraper
