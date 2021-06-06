@@ -82,7 +82,16 @@ func requestHandler(w http.ResponseWriter, r *http.Request) (*Result, int) {
 
 	// Parsing JSON to reqParams
 	json.Unmarshal(data, &reqParams)
-	resp, err := http.Get(reqParams.URL)
+
+	tr := &http.Transport{}
+	client := &http.Client{
+		Transport: tr,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	
+	resp, err := client.Get(reqParams.URL)
 	if err != nil {
 		return nil, http.StatusBadRequest
 	}
