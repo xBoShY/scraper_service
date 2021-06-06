@@ -37,6 +37,8 @@ Scraper is a web service that grabs the HTTP response status codes for a given U
    - 400 BadRequest: Request POST body is malformed
    - 500 InternalServerError: Unexpected internal error
 
+Metrics are a prometheus (prometheus-client) service accessible on port 9095 (by default) under path /metrics.
+
 ## Build and run Scraper
 
 Requirements:
@@ -84,10 +86,30 @@ This builds the docker image `scraper_service/scraper:0.1.0` using a multi-stage
 docker build -t scraper_service/scraper:0.1.0 .
 ```
 
+Launching a container
+
+```bash
+docker run -p 8080:8080 -p 9095:9095 scraper_service/scraper:0.1.0
+```
+
 ## Simple request script
 
 ```bash
 ./tools/request.sh <address-to-scrape> <scraper-service-address> <count>
+```
+
+Examples:
+
+```bash
+./tools/request.sh https://google.com localhost:8080 1
+```
+
+```bash
+./tools/request.sh https://phaidra.ai localhost:8080 1
+```
+
+```bash
+./tools/request.sh https://phaidra.ai/trackrecord localhost:8080 1
 ```
 
 ## PromQL
