@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
 	"net"
@@ -83,7 +84,12 @@ func requestHandler(w http.ResponseWriter, r *http.Request) (*Result, int) {
 	// Parsing JSON to reqParams
 	json.Unmarshal(data, &reqParams)
 
+	// System's certificate pool might be outdated, certificate validation is not required
+	tls := &tls.Config{
+		InsecureSkipVerify: true,
+	}
 	tr := &http.Transport{}
+	tr.TLSClientConfig = tls
 	client := &http.Client{
 		Transport: tr,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
